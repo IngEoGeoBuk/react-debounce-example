@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useCallback, useState } from "react";
+import debounce from "debounce-promise";
 
 function App() {
+  const [searchPhrase, setSearchPhrase] = useState<string>("");
+  const [isCorrect, setIsCorrect] = useState<boolean>(false)
+
+  const fetchResult = (data: any) => {
+    if(data === 'hi') {
+      setIsCorrect(true)
+      console.log(data)
+    } else {
+      setIsCorrect(false)
+      console.log(data)
+    }
+  };
+  const dbounce = useCallback(debounce(fetchResult, 500), []);
+
+  const handleChange = (e: any) => {
+    const { value: nextPhrase } = e.target;
+    setSearchPhrase(nextPhrase);
+    dbounce(nextPhrase);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* <input type="text" onChange={handleChange} value={searchPhrase} /> */}
+      <input 
+        type="text" 
+        onChange={(e) => {handleChange(e)}} 
+        value={searchPhrase} 
+       />
+      <br/>
+      {isCorrect ? <><span>yes</span></> : <><span>no</span></>}
     </div>
   );
 }
